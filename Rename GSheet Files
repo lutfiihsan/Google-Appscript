@@ -1,0 +1,14 @@
+//BULK Rename from list
+function RenameFile() {
+  var spreadsheetID = [];
+  spreadsheetID = SpreadsheetApp.getActiveSpreadsheet()
+  .getSheetByName('sheet_name')
+  .getRange('range')
+  .getValues()
+  .reduce(function(p,c){
+    if (c[0] !== '' && c[1] !== '')
+      p.push(SpreadsheetApp.openById(c[0]).rename(c[1]));
+    return p;
+  }, []);
+  Logger.log(spreadsheetID);
+}
