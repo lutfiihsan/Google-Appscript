@@ -1,0 +1,72 @@
+function copyMultipleSpreadsheet(){
+  var sheets = [];
+  //SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Review').getRange('A2:AC').clear(); Old Version
+  
+  //New Version
+  //Hapus Kolom "No." s/d Kolom "Tech Families"
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Review').getRange('A2:AF').clear();
+  //Hapus Kolom "Check Exist File Name"
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Review').getRange('AH2:AH').clear();
+  //Hapus Kolom "Naming correctness" s/d Kolom "Incorrect Classification Error"
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Review').getRange('AJ2:AS').clear();
+  //Hapus Kolom "Comment"
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Review').getRange('AU2:AU').clear();
+  // Getting a list of ids
+  sheets = SpreadsheetApp.getActive()
+  .getRange('List_File_Cities!K2:L')
+  .getValues()
+  .reduce(function(p, c) {
+    if (c[0] !== '' && c[1] !== '')
+      p.push(SpreadsheetApp.openById(c[0]));
+    return p;
+  }, []);
+  
+  var data = sheets.reduce(function(p, c){
+    //Ambil data mulai dari Kolom "No" baris ke-2 sampai Kolom "Not Upload" 
+    var values = c.getSheetByName('Input').getRange('A2:AF').getValues().filter(function(row){
+      return row[4]!=='';
+    });
+    p = p.concat(values);
+    return p;
+  }, []);
+  
+  var dataFilter = data.map(function(pilah){
+    //Filter data mulai dari Kolom "No" baris ke-2 s/d Kolom "Tech Families"
+    return [pilah[0],pilah[1],pilah[2],pilah[3],pilah[4],pilah[5],pilah[6],pilah[7],pilah[8],pilah[9],pilah[10],pilah[11],pilah[12],pilah[13],pilah[14],pilah[15],pilah[16],pilah[17],pilah[18],pilah[19],pilah[20],pilah[21],pilah[22],pilah[23]];
+  
+  });
+  //SpreadsheetApp.getActive().getSheetByName('Input').getRange(2, 1, data.length, data[0].length).setValues(data)
+  SpreadsheetApp.getActive().getSheetByName('Review').getRange(2, 1, dataFilter.length, dataFilter[0].length).setValues(dataFilter);
+}
+
+function importStatusReview(){
+  var sheets = [];
+  //Hapus kolom "Status" s/d kolom "Not Upload"
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Review').getRange('Y2:AF').clear();
+ 
+  // Getting a list of ids
+  sheets = SpreadsheetApp.getActive()
+  .getRange('List_File_Cities!K2:L')
+  .getValues()
+  .reduce(function(p, c) {
+    if (c[0] !== '' && c[1] !== '')
+      p.push(SpreadsheetApp.openById(c[0]));
+    return p;
+  }, []);
+  
+  var data = sheets.reduce(function(p, c){
+    var values = c.getSheetByName('Input').getRange('A2:AF').getValues().filter(function(row){
+      return row[4]!=='';
+    });
+    p = p.concat(values);
+    return p;
+  }, []);
+  
+  var dataFilter = data.map(function(pilah){
+    //Ambil data dari kolom "Status" s/d kolom "Not Upload"
+    return [pilah[24],pilah[25],pilah[26],pilah[27],pilah[28],pilah[29],pilah[30],pilah[31]];
+  
+  });
+  //SpreadsheetApp.getActive().getSheetByName('Input').getRange(2, 1, data.length, data[0].length).setValues(data)
+  SpreadsheetApp.getActive().getSheetByName('Review').getRange(2, 25, dataFilter.length, dataFilter[0].length).setValues(dataFilter);
+}
