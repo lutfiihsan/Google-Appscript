@@ -1,0 +1,41 @@
+function importQC() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var reviewSS = ss.getSheetByName('Review');
+  var lastRow = reviewSS.getRange(1, 5).getDataRegion(SpreadsheetApp.Dimension.ROWS).getLastRow();
+  
+  var masterQC = SpreadsheetApp.openById('id');
+  var folderQC = DriveApp.getFolderById('id'); 
+  
+  var operator = ss.getSheetByName('List_File_Cities').getRange('D2').getValue();
+  var cities = reviewSS.getRange('AW2').getValue();
+  var split = operator.split(".");
+  var propper = split[0].toUpperCase();
+  var namaFile = 'Grab_Review_Sheet_' + propper + '_' + Utilities.formatDate(new Date(), 'Etc/GMT', 'yyyyMMdd') + '_' + cities;
+  
+  var salinFile = DriveApp.getFileById(masterQC.getId()).makeCopy(namaFile, folderQC);
+  
+  //data QC
+  var dataQC = reviewSS.getRange(2, 1, lastRow-1, 49).getValues();
+  
+  var data = dataQC.filter(function(item){
+    var cities = reviewSS.getRange('AW2').getValue();
+    return item[34] === cities; 
+  });
+  
+  var dataPaste = data.map(function(pilah){
+    return [pilah[0],pilah[1],pilah[2],pilah[3],pilah[4],pilah[5],pilah[6],pilah[7],pilah[8],pilah[9],pilah[10],pilah[11],pilah[12],pilah[13],pilah[14],pilah[15],pilah[16],pilah[17],pilah[18],pilah[19],pilah[20],pilah[21],pilah[22],pilah[23],pilah[24],pilah[25],pilah[26],pilah[27],pilah[28],pilah[29],pilah[30],pilah[31],pilah[32],pilah[35],pilah[36],pilah[37],pilah[38],pilah[39],pilah[40],pilah[41],pilah[42],pilah[43],pilah[44],pilah[45],pilah[46],pilah[47]];
+  });
+  
+  
+  //memasukkan data Compile ke file BUP
+  var fileQC = SpreadsheetApp.openById(salinFile.getId());
+  var sheetQC = fileQC.getSheetByName('Sheet6');
+  sheetQC.getRange(2, 1, dataPaste.length, dataPaste[0].length).setValues(dataPaste);
+  
+  //memasukkan file PET ke dalam folder BUP yang sudah ditentukan
+  //folderQC.addFile(salinFile);
+  //DriveApp.removeFile(salinFile);  
+  
+  reviewSS.getRange('AW3').clear();
+  reviewSS.getRange('AW3').setValue('https://docs.google.com/spreadsheets/d/' + salinFile.getId());
+}
