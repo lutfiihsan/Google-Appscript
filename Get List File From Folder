@@ -1,0 +1,33 @@
+function listFilesInFolder(){
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('List_File_Cities');
+  sheet.getRange('A2:B').clear();
+  
+  var folderID = []; //array
+  var folderID = ss.getSheetByName('List_Folder_Cities').getRange('A2:D').getValues()
+  .reduce(function(p, c){
+    if (c[0] !== '' && c[2] !== ''){
+      p.push(DriveApp.getFolderById(c[2])
+             .searchFiles("not title contains 'Done' and not title contains 'InProgress' and not title contains 'xxx' and not title contains 'YYYY' and not title contains 'Nama'"));
+    }// and not title contains 'InProgress'
+    return p;
+  }, []);
+    
+  var cnt = 0;
+  var file;
+  var pasteData = [];
+  
+  for (var i = 0; i < folderID.length; i++){
+   while (folderID[i].hasNext()) {
+    var file = folderID[i].next();
+    cnt++;
+      var data = [
+        file.getName(),
+        file.getUrl(),
+      ];
+        pasteData.push(data);
+        //sheet.appendRow(data);
+  }
+ }
+        sheet.getRange(2, 1, pasteData.length, 2).setValues(pasteData);
+}
