@@ -1,0 +1,69 @@
+//Compile PET
+function compilePET() {
+  //salin data Compile
+  var ssCompile = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetCompile = ssCompile.getSheetByName('Upload');
+  var dataCompile = sheetCompile.getRange('A4:BI').getValues();
+
+  //nama folder PET
+  var folderName = sheetCompile.getRange('B1').getValue() + ' ' + Utilities.formatDate(new Date(), 'Etc/GMT', 'yyyyMMdd');
+  
+  //nama file PET
+  var parentFolder = DriveApp.getFolderById('id');
+  var compileName = sheetCompile.getRange('D1').getValue();
+  
+  //cek subfolder jika belum ada
+  try {
+    var newFdr = parentFolder.getFoldersByName(folderName).next();
+  }
+  catch(e) {
+    var newFdr = parentFolder.createFolder(folderName);
+  }
+  
+  //buat file PET
+  var subFolderId = DriveApp.getFolderById(newFdr.getId());
+  var fileName = SpreadsheetApp.create(compileName);
+  var createFilePET = DriveApp.getFileById(fileName.getId());
+
+  //memasukkan data Compile ke file PET
+  var filePET = SpreadsheetApp.openById(createFilePET.getId());
+  var sheetPET = filePET.getSheetByName('Sheet1');
+  sheetPET.getRange(1, 1, dataCompile.length, dataCompile[0].length).setValues(dataCompile);
+
+  //memasukkan file PET ke dalam subfolder PET yang sudah ditentukan
+  subFolderId.addFile(createFilePET);
+  DriveApp.removeFile(createFilePET);
+
+  //mengambil link file PET
+  sheetCompile.getRange('D2').clear();
+  sheetCompile.getRange('D2').setValue('https://docs.google.com/spreadsheets/d/' + createFilePET.getId());
+}
+
+//Compile BUP
+function compileBUP() {
+  //salin data Compile
+  var ssCompile = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetCompile = ssCompile.getSheetByName('Upload');
+  var dataCompile = sheetCompile.getRange('A4:BI').getValues();
+  
+  //nama file Compile
+  var compileName = sheetCompile.getRange('D1').getValue();
+  
+  //buat file BUP
+  var parentFolder = DriveApp.getFolderById('id');
+  var fileName = SpreadsheetApp.create(compileName);
+  var createFileBUP = DriveApp.getFileById(fileName.getId());
+  
+  //memasukkan data Compile ke file BUP
+  var fileBUP = SpreadsheetApp.openById(createFileBUP.getId());
+  var sheetBUP = fileBUP.getSheetByName('Sheet1');
+  sheetBUP.getRange(1, 1, dataCompile.length, dataCompile[0].length).setValues(dataCompile);
+  
+  //memasukkan file PET ke dalam folder BUP yang sudah ditentukan
+  parentFolder.addFile(createFileBUP);
+  DriveApp.removeFile(createFileBUP);  
+  
+  //mengambil link file BUP
+  sheetCompile.getRange('D3').clear();
+  sheetCompile.getRange('D3').setValue('https://docs.google.com/spreadsheets/d/' + createFileBUP.getId());
+}
